@@ -2,8 +2,12 @@
 Database connection and session management
 """
 import os
+from dotenv import load_dotenv
 from sqlmodel import SQLModel, create_engine, Session
 from sqlmodel import select
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 # Get database URL from environment

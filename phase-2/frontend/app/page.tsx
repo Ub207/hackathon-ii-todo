@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { TaskList } from '../components/TaskList';
 import { TaskForm } from '../components/TaskForm';
 import { fetchTasks, createTask, updateTask, deleteTask } from '../services/api';
-import type { Task } from '../types/task';
+import type { Task, TaskStatus, TaskPriority } from '../types/task';
 
 export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([]);

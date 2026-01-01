@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import type { Task } from '../types/task';
+import type { Task, TaskStatus, TaskPriority } from '../types/task';
 
 interface TaskFormProps {
   task?: Task | null;
@@ -13,8 +13,8 @@ export function TaskForm({ task, onSubmit, onCancel }: TaskFormProps) {
   const [formData, setFormData] = useState({
     title: task?.title || '',
     description: task?.description || '',
-    status: task?.status || 'pending',
-    priority: task?.priority || 'medium',
+    status: (task?.status || 'pending') as TaskStatus,
+    priority: (task?.priority || 'medium') as TaskPriority,
     due_date: task?.due_date ? task.due_date.split('T')[0] : '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -45,7 +45,7 @@ export function TaskForm({ task, onSubmit, onCancel }: TaskFormProps) {
 
       {error && (
         <div className="mb-4 p-3 bg-red-100 border border-red-300 rounded text-red-700">
-          � {error}
+          {error}
         </div>
       )}
 
@@ -85,13 +85,13 @@ export function TaskForm({ task, onSubmit, onCancel }: TaskFormProps) {
             </label>
             <select
               value={formData.status}
-              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, status: e.target.value as TaskStatus })}
               className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
               disabled={isSubmitting}
             >
-              <option value="pending">� Pending</option>
-              <option value="in_progress">= In Progress</option>
-              <option value="completed"> Completed</option>
+              <option value="pending"> Pending</option>
+              <option value="in_progress"> In Progress</option>
+              <option value="completed"> Completed</option>
             </select>
           </div>
 
@@ -101,13 +101,13 @@ export function TaskForm({ task, onSubmit, onCancel }: TaskFormProps) {
             </label>
             <select
               value={formData.priority}
-              onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
+              onChange={(e) => setFormData({ ...formData, priority: e.target.value as TaskPriority })}
               className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
               disabled={isSubmitting}
             >
-              <option value="low">=� Low</option>
-              <option value="medium">=� Medium</option>
-              <option value="high">=4 High</option>
+              <option value="low"> Low</option>
+              <option value="medium"> Medium</option>
+              <option value="high"> High</option>
             </select>
           </div>
         </div>
