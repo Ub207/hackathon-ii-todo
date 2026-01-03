@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "SlashCommand(/sp.tasks)",
+      "Bash(.specify/scripts/bash/check-prerequisites.sh --json)"
+    ]
+  }
+}
