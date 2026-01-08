@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git --version)",
+      "Bash(git clone:*)",
+      "Bash(cat:*)",
+      "Bash(wc:*)",
+      "SlashCommand(/sp.plan)",
+      "Bash(.specify/scripts/bash/check-prerequisites.sh:*)",
+      "Bash(npm install)",
+      "Bash(pip install:*)",
+      "Bash(curl:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nImplement full-stack todo application with Next.js, FastAPI, and NeonDB\n\nBackend:\n- Complete FastAPI API with all CRUD operations\n- Database models with SQLModel\n- Pydantic validation schemas\n- CORS configuration\n- Health check endpoint\n\nFrontend:\n- Next.js 14+ with App Router\n- TypeScript with proper types\n- TaskList and TaskForm components\n- API service layer with error handling\n- Tailwind CSS for styling\n- Responsive design\n\nConfiguration:\n- Environment variable templates (.env.example)\n- Comprehensive README with setup instructions\n- .gitignore files for both backend and frontend\n\nFollows constitution principles with clean architecture and separation of concerns.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git remote add:*)",
+      "Bash(git push:*)",
+      "Bash(timeout 10 python:*)",
+      "Bash(python:*)",
+      "Bash(copy ..\\.env.example .env)",
+      "Bash(timeout 20 python:*)",
+      "Bash(npm run dev:*)",
+      "Bash(xargs kill:*)",
+      "Bash(npx tsc:*)",
+      "Bash(git commit:*)",
+      "Bash(git remote set-url:*)",
+      "Bash(rm:*)",
+      "Bash(git rm:*)",
+      "Bash(git pull:*)"
+    ]
+  }
+}
