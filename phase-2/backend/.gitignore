@@ -1,8 +1,8 @@
 # Python
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
+*.pyc
+*.pyo
+*.pyd
 .Python
 build/
 develop-eggs/
@@ -55,3 +55,6 @@ htmlcov/
 # OS
 .DS_Store
 Thumbs.db
+
+# Local config
+config.local
