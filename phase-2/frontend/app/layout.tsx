@@ -5,8 +5,8 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Todo App',
-  description: 'Full-stack todo application with Next.js and FastAPI',
+  title: 'TaskMaster Pro',
+  description: 'A modern and intuitive task management application built with Next.js and FastAPI.',
 };
 
 export default function RootLayout({
