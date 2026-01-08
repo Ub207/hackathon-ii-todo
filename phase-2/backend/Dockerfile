@@ -6,19 +6,20 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
+    postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first for better caching
+# Copy requirements (HF specific)
 COPY requirements.txt .
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application
+# Copy backend source code
 COPY . .
 
 # Expose the port
 EXPOSE 7860
 
-# Command to run the application
-CMD ["python", "app.py"]
+# Start FastAPI
+CMD ["python", "run.py"]
