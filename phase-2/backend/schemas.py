@@ -9,27 +9,6 @@ from models import TaskStatus, TaskPriority
 
 # ==================== Schemas ====================
 
-class UserBase(SQLModel):
-    """Base user schema"""
-    email: str
-    username: str
-    full_name: Optional[str] = None
-
-
-class UserCreate(UserBase):
-    """User creation schema"""
-    password: str
-
-
-class User(UserBase):
-    """User response schema"""
-    id: int
-    created_at: datetime
-
-    class Config:
-        from_attributes = True
-
-
 class TaskBase(SQLModel):
     """Base task schema"""
     title: str
@@ -41,6 +20,7 @@ class TaskBase(SQLModel):
 class TaskCreate(TaskBase):
     """Task creation schema"""
     due_date: Optional[datetime] = None
+    user_id: int
 
 
 class TaskUpdate(SQLModel):
@@ -50,6 +30,11 @@ class TaskUpdate(SQLModel):
     status: Optional[TaskStatus] = None
     priority: Optional[TaskPriority] = None
     due_date: Optional[datetime] = None
+
+
+class TaskStatusUpdate(SQLModel):
+    """Schema for updating just the task status"""
+    new_status: TaskStatus
 
 
 class Task(TaskBase):

@@ -1,20 +1,34 @@
 """
 FastAPI application entry point
 """
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from db import create_db_and_tables, get_session
+from db import create_db_and_tables
 from routes import router
 import uvicorn
 
 
-# Create FastAPI app
+# ==================== Lifespan Events ====================
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Lifespan context manager for startup and shutdown"""
+    # Startup
+    create_db_and_tables()
+    yield
+    # Shutdown
+    print("Shutting down...")
+
+
+# Create FastAPI app with lifespan
 app = FastAPI(
     title="Todo API",
     description="Full-stack todo application API",
     version="1.0.0",
     docs_url="/docs",
-    redoc_url="/redoc"
+    redoc_url="/redoc",
+    lifespan=lifespan
 )
 
 
@@ -38,20 +52,6 @@ app.include_router(router)
 def health_check():
     """Health check endpoint"""
     return {"status": "healthy", "service": "todo-api"}
-
-
-# ==================== Startup Events ====================
-
-@app.on_event("startup")
-def on_startup():
-    """Initialize database on startup"""
-    create_db_and_tables()
-
-
-@app.on_event("shutdown")
-def on_shutdown():
-    """Cleanup on shutdown"""
-    print("Shutting down...")
 
 
 # ==================== Main ====================

@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlmodel import Session, select, col
 from db import get_session
 from models import Task, TaskStatus, TaskPriority
-from schemas import TaskCreate, TaskUpdate, Task, TaskListResponse
+from schemas import TaskCreate, TaskUpdate, TaskStatusUpdate, Task as TaskSchema, TaskListResponse
 
 
 router = APIRouter(prefix="/api/v1", tags=["Tasks"])
@@ -25,7 +25,7 @@ def get_tasks(
     session: Session = Depends(get_session)
 ):
     """
-    Get all tasks for a user with optional filtering and pagination
+    Get all tasks with optional filtering and pagination
     """
     query = select(Task).where(Task.user_id == user_id)
 
@@ -57,10 +57,10 @@ def get_tasks(
     }
 
 
-@router.get("/tasks/{task_id}", response_model=Task)
+@router.get("/tasks/{task_id}", response_model=TaskSchema)
 def get_task(
     task_id: int,
-    user_id: int = Query(..., description="User ID for ownership check"),
+    user_id: int = Query(..., description="User ID"),
     session: Session = Depends(get_session)
 ):
     """
@@ -77,16 +77,15 @@ def get_task(
     if task.user_id != user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="You don't have permission to view this task"
+            detail="Not authorized to access this task"
         )
 
     return task
 
 
-@router.post("/tasks", response_model=Task, status_code=status.HTTP_201_CREATED)
+@router.post("/tasks", response_model=TaskSchema, status_code=status.HTTP_201_CREATED)
 def create_task(
     task_data: TaskCreate,
-    user_id: int = Query(..., description="User ID creating the task"),
     session: Session = Depends(get_session)
 ):
     """
@@ -100,7 +99,7 @@ def create_task(
         status=task_data.status,
         priority=task_data.priority,
         due_date=task_data.due_date,
-        user_id=user_id,
+        user_id=task_data.user_id,
         created_at=datetime.utcnow(),
         updated_at=datetime.utcnow()
     )
@@ -112,11 +111,11 @@ def create_task(
     return task
 
 
-@router.put("/tasks/{task_id}", response_model=Task)
+@router.put("/tasks/{task_id}", response_model=TaskSchema)
 def update_task(
     task_id: int,
     task_update: TaskUpdate,
-    user_id: int = Query(..., description="User ID for ownership check"),
+    user_id: int = Query(..., description="User ID"),
     session: Session = Depends(get_session)
 ):
     """
@@ -135,7 +134,7 @@ def update_task(
     if task.user_id != user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="You don't have permission to update this task"
+            detail="Not authorized to update this task"
         )
 
     # Filter out None values for partial update
@@ -162,7 +161,7 @@ def update_task(
 @router.delete("/tasks/{task_id}")
 def delete_task(
     task_id: int,
-    user_id: int = Query(..., description="User ID for ownership check"),
+    user_id: int = Query(..., description="User ID"),
     session: Session = Depends(get_session)
 ):
     """
@@ -179,7 +178,7 @@ def delete_task(
     if task.user_id != user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="You don't have permission to delete this task"
+            detail="Not authorized to delete this task"
         )
 
     session.delete(task)
@@ -188,11 +187,11 @@ def delete_task(
     return {"success": True, "message": "Task deleted successfully"}
 
 
-@router.patch("/tasks/{task_id}/status")
+@router.patch("/tasks/{task_id}/status", response_model=TaskSchema)
 def update_task_status(
     task_id: int,
-    new_status: TaskStatus,
-    user_id: int = Query(..., description="User ID for ownership check"),
+    status_update: TaskStatusUpdate,
+    user_id: int = Query(..., description="User ID"),
     session: Session = Depends(get_session)
 ):
     """
@@ -211,10 +210,10 @@ def update_task_status(
     if task.user_id != user_id:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="You don't have permission to update this task"
+            detail="Not authorized to update this task"
         )
 
-    task.status = new_status
+    task.status = status_update.new_status
     task.updated_at = datetime.utcnow()
 
     session.add(task)

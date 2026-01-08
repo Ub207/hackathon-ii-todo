@@ -11,7 +11,16 @@
       "Bash(python -m pip list)",
       "Bash(dir:*)",
       "Bash(python main.py)",
-      "Bash(npm run dev)"
+      "Bash(npm run dev:*)",
+      "Bash(python:*)",
+      "Bash(timeout 3 bash:*)",
+      "Bash(node --version)",
+      "Bash(pip install -r requirements.txt)",
+      "Bash(uvicorn main:app --host 127.0.0.1 --port 8000 --reload)",
+      "Bash(curl http://127.0.0.1:8000/health)",
+      "Bash(gh --version)",
+      "Bash(git remote add hackathon-ii-todo https://github.com/Ub207/hackathon-ii-todo.git)",
+      "Bash(git fetch hackathon-ii-todo)"
     ]
   }
 }

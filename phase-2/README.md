@@ -1,66 +1,80 @@
-# Full-Stack Todo Application
+# Full Stack TODO App
 
-Complete full-stack todo application with Next.js (frontend) and FastAPI (backend).
+A modern, beautiful full-stack todo application built with Next.js (React), FastAPI (Python), and PostgreSQL (NeonDB).
 
-## Tech Stack
+## 🎯 Features
 
-### Backend
-- **FastAPI** - Modern Python web framework
-- **SQLModel** - ORM for database operations
-- **PostgreSQL/Neon** - Database
-- **Pydantic** - Data validation
-- **Uvicorn** - ASGI server
+- ✅ Create, Read, Update, and Delete tasks
+- 📋 Task status management (Pending, In Progress, Completed)
+- 🔥 Priority levels (Low, Medium, High)
+- 📅 Due date tracking with overdue indicators
+- 🎨 Modern glassmorphism UI design
+- 🔔 Success/error notifications
+- 📱 Responsive design
+- 🚀 Fast API with proper CORS and validation
+- 💾 PostgreSQL database with NeonDB
+
+## 🛠 Tech Stack
 
 ### Frontend
-- **Next.js 14+** - React framework with App Router
-- **TypeScript** - Type safety
-- **Tailwind CSS** - Styling
+- **Framework**: Next.js 14 (React)
+- **Styling**: Tailwind CSS
+- **Language**: TypeScript
 
-## Quick Start
+### Backend
+- **Framework**: FastAPI
+- **Language**: Python 3.10+
+- **ORM**: SQLModel
+- **Database**: PostgreSQL (NeonDB)
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Python 3.10 or higher
+- Node.js 18 or higher
+- npm or yarn
+- A NeonDB account (free tier available at [neon.tech](https://neon.tech))
 
 ### Backend Setup
 
 ```bash
-cd backend
+cd phase-2/backend
 
-# Create virtual environment
-python -m venv venv
-# On Windows:
-venv\Scripts\activate
-# On Linux/Mac:
-source venv/bin/activate
+# Install Python dependencies
+pip install fastapi uvicorn sqlmodel python-dotenv psycopg2-binary
 
-# Install dependencies
-pip install -r requirements.txt
+# Set up environment variables
+# Copy the example env file (on Windows use: copy .env.example .env)
+cp .env.example .env
 
-# Set environment variables
-copy .env.example .env
-# Edit .env and set your DATABASE_URL
+# Update .env with your NeonDB credentials:
+# DATABASE_URL=postgresql://your-username:your-password@your-host/neondb?sslmode=require
 
-# Run server
+# Run the backend server
 python main.py
 ```
 
-API available at: http://localhost:8000
-API Docs: http://localhost:8000/docs
+The API will be available at `http://localhost:8000`
+- API Documentation: `http://localhost:8000/docs`
+- Health Check: `http://localhost:8000/health`
 
 ### Frontend Setup
 
 ```bash
-cd frontend
+cd phase-2/frontend
 
-# Install dependencies
+# Install Node dependencies
 npm install
 
-# Set environment variables
-copy .env.local.example .env.local
-# Edit .env.local and set NEXT_PUBLIC_API_URL if needed
+# .env.local is already created with:
+# NEXT_PUBLIC_API_URL=http://localhost:8000
 
-# Run dev server
+# Run the development server
 npm run dev
 ```
 
-App available at: http://localhost:3000
+The app will be available at `http://localhost:3000`
 
 ## Project Structure
 
@@ -68,43 +82,86 @@ App available at: http://localhost:3000
 phase-2/
 ├── backend/
 │   ├── main.py           # FastAPI app entry point
-│   ├── db.py             # Database connection
+│   ├── db.py             # Database connection with user initialization
 │   ├── models.py         # SQLModel database models
 │   ├── schemas.py        # Pydantic validation schemas
-│   ├── routes.py         # API routes
-│   ├── requirements.txt  # Python dependencies
-│   ├── .gitignore
-│   └── .env.example
+│   ├── routes.py         # API routes for CRUD operations
+│   ├── .env              # Backend environment variables
+│   └── .env.example      # Example configuration
 ├── frontend/
 │   ├── app/
-│   │   ├── page.tsx      # Home page
-│   │   ├── layout.tsx    # Root layout
-│   │   └── globals.css   # Global styles
+│   │   ├── page.tsx      # Main page with state management
+│   │   └── layout.tsx    # App layout
 │   ├── components/
-│   │   ├── TaskList.tsx  # Task list component
-│   │   └── TaskForm.tsx  # Task form component
+│   │   ├── TaskList.tsx  # Task list with glassmorphism UI
+│   │   └── TaskForm.tsx  # Task form with validation
 │   ├── services/
-│   │   ├── api.ts        # API service functions
-│   │   └── types/task.ts # TypeScript types
+│   │   └── api.ts        # API service functions
+│   ├── types/
+│   │   └── task.ts       # TypeScript types
+│   ├── .env.local        # Frontend environment variables (created)
 │   ├── package.json
-│   ├── tsconfig.json
-│   ├── tailwind.config.js
-│   ├── next.config.js
-│   ├── .gitignore
-│   └── .env.local.example
+│   └── tailwind.config.js
 └── README.md
 ```
 
-## API Endpoints
+## 🧪 Testing
 
-### Tasks
+### Manual Testing Steps
 
-- `GET /api/v1/tasks` - Get all tasks for a user
-- `GET /api/v1/tasks/{id}` - Get specific task
-- `POST /api/v1/tasks` - Create new task
-- `PUT /api/v1/tasks/{id}` - Update task
-- `DELETE /api/v1/tasks/{id}` - Delete task
-- `PATCH /api/v1/tasks/{id}/status` - Update task status
+1. **Create a Task:**
+   - Click "Create New Task" button
+   - Fill in the form with title, description, status, priority, due date
+   - Click "Create Task"
+   - ✅ Verify: Task appears in the list with success notification
+
+2. **Fetch Tasks:**
+   - Refresh the page
+   - ✅ Verify: All tasks load correctly
+
+3. **Edit a Task:**
+   - Click the edit icon (pencil) on a task
+   - Modify the title or status
+   - Click "Update Task"
+   - ✅ Verify: Task updates with success notification
+
+4. **Delete a Task:**
+   - Click the delete icon (trash) on a task
+   - Confirm deletion
+   - ✅ Verify: Task is removed with success notification
+
+5. **Priority Colors:**
+   - ✅ High priority shows red
+   - ✅ Medium priority shows yellow
+   - ✅ Low priority shows green
+
+6. **Status Badges:**
+   - ✅ Pending shows gray
+   - ✅ In Progress shows blue
+   - ✅ Completed shows green
+
+7. **Due Dates:**
+   - ✅ Date displays in readable format (e.g., "Jan 15, 2026")
+   - ✅ Overdue tasks show red highlight with "(Overdue)" text
+   - ✅ Completed tasks don't show overdue warning
+
+8. **Error Handling:**
+   - Try to create a task without a title
+   - ✅ Verify: Button is disabled
+   - Try to submit with network disabled
+   - ✅ Verify: Error notification appears
+
+## 🔧 API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/health` | Health check |
+| GET | `/api/v1/tasks?user_id=1` | Get all tasks |
+| GET | `/api/v1/tasks/{id}?user_id=1` | Get specific task |
+| POST | `/api/v1/tasks?user_id=1` | Create new task |
+| PUT | `/api/v1/tasks/{id}?user_id=1` | Update task |
+| DELETE | `/api/v1/tasks/{id}?user_id=1` | Delete task |
+| PATCH | `/api/v1/tasks/{id}/status?user_id=1` | Update status |
 
 ### Query Parameters
 
@@ -115,16 +172,116 @@ phase-2/
 - `page` (optional) - Page number (default: 1)
 - `limit` (optional) - Items per page (default: 20, max: 100)
 
-## Features
+## 🐛 Troubleshooting
 
-- ✅ Create, read, update, delete tasks
-- ✅ Filter by status and priority
-- ✅ Search tasks
-- ✅ Pagination
-- ✅ Responsive UI with Tailwind CSS
-- ✅ Type-safe with TypeScript and SQLModel
+### "Failed to fetch" Error
 
-## Database Models
+1. **Check if backend is running:**
+   ```bash
+   curl http://localhost:8000/health
+   ```
+
+2. **Verify API URL in frontend:**
+   - Check `frontend/.env.local`
+   - Ensure `NEXT_PUBLIC_API_URL=http://localhost:8000`
+
+3. **Check CORS settings:**
+   - Verify `CORS_ORIGINS=http://localhost:3000` in `backend/.env`
+
+### Database Connection Error
+
+1. **Verify DATABASE_URL is correct:**
+   - Check `backend/.env`
+   - Ensure credentials are accurate
+
+2. **Test database connection:**
+   ```bash
+   cd backend
+   python -c "from db import engine; print(engine)"
+   ```
+
+3. **Check if NeonDB is active:**
+   - Log in to [neon.tech](https://neon.tech)
+   - Verify your project is not suspended
+
+### Port Already in Use
+
+1. **Check what's using the port:**
+   ```bash
+   # Windows
+   netstat -ano | findstr :8000
+   # or
+   netstat -ano | findstr :3000
+
+   # Mac/Linux
+   lsof -i :8000
+   # or
+   lsof -i :3000
+   ```
+
+2. **Kill the process or use different ports:**
+   - Backend: Change port in `backend/main.py` (line 63)
+   - Frontend: Change port with `npm run dev -- -p 3001`
+
+## 📝 What Was Fixed
+
+### Backend Issues Fixed
+- ✅ Added `ensure_default_user()` function to create a default user (ID=1)
+- ✅ Fixed import statements for database modules
+- ✅ Proper CORS configuration for localhost:3000
+- ✅ Health check endpoint added
+- ✅ Proper error handling with HTTP status codes
+
+### Frontend Issues Fixed
+- ✅ Created `.env.local` with correct API URL
+- ✅ Added comprehensive error handling and user notifications
+- ✅ Fixed form submission and state management
+- ✅ Added loading and disabled states
+- ✅ Auto-refresh task list after CRUD operations
+
+### UI/UX Improvements
+- ✅ Modern glassmorphism design with gradient backgrounds
+- ✅ Backdrop blur effects on cards
+- ✅ Smooth hover animations and transitions
+- ✅ Gradient buttons with hover effects
+- ✅ Fixed edit and delete icons (SVG icons instead of emojis)
+- ✅ Proper due date display with overdue indicators
+- ✅ Priority badges with color coding
+- ✅ Status badges with proper labels
+- ✅ Responsive design for mobile and desktop
+- ✅ Empty state with friendly message
+- ✅ Toast notifications for success/error feedback
+- ✅ Form validation (title required)
+- ✅ Loading states during async operations
+
+## 🎨 UI Features
+
+### Modern Glassmorphism Design
+- Semi-transparent cards with backdrop blur
+- Gradient backgrounds (blue to purple)
+- Subtle shadows and borders
+- Smooth transitions and hover effects
+
+### Task Card UI
+- **Title**: Bold, strikethrough when completed
+- **Status Badge**: Color-coded pill badge
+- **Priority**: Labeled badge (High/Medium/Low) with color
+- **Due Date**: Calendar icon with formatted date
+- **Overdue Indicator**: Red highlight for overdue tasks
+- **Created Date**: Displayed for reference
+- **Edit Button**: Pen icon with hover effect
+- **Delete Button**: Trash icon with hover effect
+
+### Color Scheme
+- High Priority: Red
+- Medium Priority: Yellow
+- Low Priority: Green
+- Completed Status: Green
+- In Progress: Blue
+- Pending: Gray
+- Gradient: Blue → Purple
+
+## 📦 Database Models
 
 ### User
 - id, email, username, full_name, created_at
@@ -132,22 +289,23 @@ phase-2/
 ### Task
 - id, title, description, status, priority, due_date, user_id, created_at, updated_at
 
-## Task Status
+## 📋 Task Status
 - `pending` - Task not started
 - `in_progress` - Task in progress
 - `completed` - Task finished
 
-## Task Priority
-- `low` - Low priority
-- `medium` - Medium priority (default)
-- `high` - High priority
+## 🔥 Task Priority
+- `low` - Low priority (green)
+- `medium` - Medium priority (yellow, default)
+- `high` - High priority (red)
 
-## Development
+## 🚀 Development
 
 ### Backend
 
 ```bash
 # Run with auto-reload
+cd phase-2/backend
 python main.py
 
 # Run without auto-reload (production)
@@ -158,6 +316,7 @@ uvicorn main:app --host 0.0.0.0 --port 8000
 
 ```bash
 # Development server with hot reload
+cd phase-2/frontend
 npm run dev
 
 # Production build
@@ -167,7 +326,7 @@ npm run build
 npm start
 ```
 
-## Environment Variables
+## 🔑 Environment Variables
 
 ### Backend (.env)
 
@@ -187,22 +346,6 @@ DATABASE_MAX_OVERFLOW=20
 NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
-## Testing
-
-### Backend Tests
-
-```bash
-cd backend
-pytest
-```
-
-### Frontend Tests
-
-```bash
-cd frontend
-npm test
-```
-
-## License
+## 📄 License
 
 MIT

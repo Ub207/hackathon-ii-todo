@@ -5,10 +5,9 @@ export interface Task {
   id: number;
   title: string;
   description?: string | null;
-  status: 'pending' | 'in_progress' | 'completed';
-  priority: 'low' | 'medium' | 'high';
+  status: TaskStatus;
+  priority: TaskPriority;
   due_date?: string | null;
-  user_id: number;
   created_at: string;
   updated_at: string;
 }
@@ -16,13 +15,19 @@ export interface Task {
 export type TaskStatus = 'pending' | 'in_progress' | 'completed';
 export type TaskPriority = 'low' | 'medium' | 'high';
 
+export interface TaskListResponse {
+  tasks: Task[];
+  total: number;
+  page: number;
+  pages: number;
+}
+
 export interface TaskCreate {
   title: string;
   description?: string | null;
   status?: TaskStatus;
   priority?: TaskPriority;
   due_date?: string | null;
-  user_id: number;
 }
 
 export interface TaskUpdate {
@@ -31,5 +36,4 @@ export interface TaskUpdate {
   status?: TaskStatus;
   priority?: TaskPriority;
   due_date?: string | null;
-  user_id?: number;
 }

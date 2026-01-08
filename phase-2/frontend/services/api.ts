@@ -1,15 +1,33 @@
 /**
  * API service for task operations
  */
-import type { Task, TaskListResponse } from '../types/task';
+import type { Task, TaskListResponse, TaskCreate, TaskUpdate } from '../types/task';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE = '';
+
+// Default user ID for demo purposes
+const DEFAULT_USER_ID = 1;
+
+// A helper to handle API responses and errors
+async function handleResponse<T>(response: Response): Promise<T> {
+  if (!response.ok) {
+    let errorMessage = 'API Error: ' + response.status + ' ' + response.statusText;
+    try {
+      const errorData = await response.json();
+      errorMessage = errorData.detail || errorMessage;
+    } catch (e) {
+      // Not a JSON response, stick with status text
+    }
+    throw new Error(errorMessage);
+  }
+  return response.json() as Promise<T>;
+}
+
 
 /**
- * Fetch all tasks for a user
+ * Fetch all tasks
  */
 export async function fetchTasks(
-  userId: number,
   filters?: {
     status?: string;
     priority?: string;
@@ -18,55 +36,42 @@ export async function fetchTasks(
     limit?: number;
   }
 ): Promise<TaskListResponse> {
-  const params = new URLSearchParams({
-    user_id: userId.toString(),
-    ...(filters?.status && { status: filters.status }),
-    ...(filters?.priority && { priority: filters.priority }),
-    ...(filters?.search && { search: filters.search }),
-    ...(filters?.page && { page: filters.page.toString() }),
-    ...(filters?.limit && { limit: filters.limit.toString() }),
-  });
+  const params = new URLSearchParams();
+  params.append('user_id', DEFAULT_USER_ID.toString());
+  if (filters?.status) params.append('status', filters.status);
+  if (filters?.priority) params.append('priority', filters.priority);
+  if (filters?.search) params.append('search', filters.search);
+  if (filters?.page) params.append('page', filters.page.toString());
+  if (filters?.limit) params.append('limit', filters.limit.toString());
 
-  const response = await fetch(`${API_BASE}/api/v1/tasks?${params}`);
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch tasks');
-  }
-
-  return response.json();
+  const response = await fetch(API_BASE + '/api/v1/tasks?' + params.toString());
+  return handleResponse<TaskListResponse>(response);
 }
 
 /**
  * Fetch a single task
  */
-export async function fetchTask(taskId: number, userId: number): Promise<Task> {
-  const response = await fetch(
-    `${API_BASE}/api/v1/tasks/${taskId}?user_id=${userId}`
-  );
-
-  if (!response.ok) {
-    throw new Error('Failed to fetch task');
-  }
-
-  return response.json();
+export async function fetchTask(taskId: number): Promise<Task> {
+  const response = await fetch(API_BASE + '/api/v1/tasks/' + taskId + '?user_id=' + DEFAULT_USER_ID);
+  return handleResponse<Task>(response);
 }
 
 /**
  * Create a new task
  */
-export async function createTask(taskData: Partial<Task>): Promise<Task> {
-  const response = await fetch(`${API_BASE}/api/v1/tasks?user_id=${taskData.user_id}`, {
+export async function createTask(taskData: Omit<TaskCreate, 'user_id'>): Promise<Task> {
+  // Add user_id to the request body
+  const requestBody = {
+    ...taskData,
+    user_id: DEFAULT_USER_ID
+  };
+
+  const response = await fetch(API_BASE + '/api/v1/tasks', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(taskData),
+    body: JSON.stringify(requestBody),
   });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.detail || 'Failed to create task');
-  }
-
-  return response.json();
+  return handleResponse<Task>(response);
 }
 
 /**
@@ -74,43 +79,30 @@ export async function createTask(taskData: Partial<Task>): Promise<Task> {
  */
 export async function updateTask(
   taskId: number,
-  taskData: Partial<Task>
+  taskData: TaskUpdate
 ): Promise<Task> {
   const response = await fetch(
-    `${API_BASE}/api/v1/tasks/${taskId}?user_id=${taskData.user_id}`,
+    API_BASE + '/api/v1/tasks/' + taskId + '?user_id=' + DEFAULT_USER_ID,
     {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(taskData),
     }
   );
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.detail || 'Failed to update task');
-  }
-
-  return response.json();
+  return handleResponse<Task>(response);
 }
 
 /**
  * Delete a task
  */
 export async function deleteTask(taskId: number): Promise<{ success: boolean }> {
-  const userId = 1; // TODO: Get from auth
-
   const response = await fetch(
-    `${API_BASE}/api/v1/tasks/${taskId}?user_id=${userId}`,
+    API_BASE + '/api/v1/tasks/' + taskId + '?user_id=' + DEFAULT_USER_ID,
     {
       method: 'DELETE',
     }
   );
-
-  if (!response.ok) {
-    throw new Error('Failed to delete task');
-  }
-
-  return response.json();
+  return handleResponse<{ success: boolean }>(response);
 }
 
 /**
@@ -120,20 +112,13 @@ export async function updateTaskStatus(
   taskId: number,
   status: string
 ): Promise<Task> {
-  const userId = 1; // TODO: Get from auth
-
   const response = await fetch(
-    `${API_BASE}/api/v1/tasks/${taskId}/status?user_id=${userId}`,
+    API_BASE + '/api/v1/tasks/' + taskId + '/status?user_id=' + DEFAULT_USER_ID,
     {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ new_status: status }),
     }
   );
-
-  if (!response.ok) {
-    throw new Error('Failed to update task status');
-  }
-
-  return response.json();
+  return handleResponse<Task>(response);
 }
