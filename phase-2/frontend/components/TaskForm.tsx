@@ -5,7 +5,7 @@ import type { Task, TaskStatus, TaskPriority, TaskCreate, TaskUpdate } from '../
 
 interface TaskFormProps {
   task?: Task | null;
-  onSubmit: (data: TaskCreate | TaskUpdate) => Promise<void>;
+  onSubmit: (data: any) => Promise<void>;
   onCancel?: () => void;
 }
 
@@ -22,6 +22,8 @@ export function TaskForm({ task, onSubmit, onCancel }: TaskFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.title.trim()) return;
+
     setIsSubmitting(true);
     setError(null);
 
@@ -31,60 +33,88 @@ export function TaskForm({ task, onSubmit, onCancel }: TaskFormProps) {
         due_date: formData.due_date || undefined,
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save task');
+      setError(err instanceof Error ? err.message : 'Failed to synchronize task');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="bg-slate-800 rounded-xl sm:rounded-2xl p-5 sm:p-8 border border-slate-700">
-      <h2 className="text-xl sm:text-2xl font-semibold text-white mb-5 sm:mb-6">
-        {task ? 'Edit Task' : 'New Task'}
-      </h2>
+    <div className="glass-card p-8 animate-scale-up border-cyan-500/20 shadow-cyan-500/10">
+      <div className="flex flex-col md:flex-row md:items-center gap-6 mb-10 pb-8 border-b border-slate-700/50">
+        <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 shadow-lg ${task ? 'bg-blue-500/10 text-blue-400' : 'bg-cyan-500/10 text-cyan-400'
+          }`}>
+          {task ? (
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+          ) : (
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          )}
+        </div>
+        <div>
+          <h2 className="text-3xl font-black text-white tracking-tight">
+            {task ? 'Update Objective' : 'New Objective'}
+          </h2>
+          <p className="text-slate-400 font-medium mt-1">
+            {task ? 'Modify existing task parameters' : 'Define a new mission for your workspace'}
+          </p>
+        </div>
+      </div>
 
       {error && (
-        <div className="mb-5 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200 text-sm">
+        <div className="mb-8 p-4 bg-red-500/10 border border-red-500/30 rounded-xl text-red-300 text-sm font-medium flex items-center gap-3 animate-slide-in">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
           {error}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
-        <div>
-          <label htmlFor="title" className="block text-sm text-slate-400 mb-2">Title *</label>
+      <form onSubmit={handleSubmit} className="space-y-8">
+        <div className="space-y-3">
+          <label htmlFor="title" className="text-sm font-bold text-slate-400 uppercase tracking-widest ml-1">
+            Task Designation
+          </label>
           <input
             id="title"
             type="text"
             value={formData.title}
             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            className="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 focus:outline-none transition-all text-base"
-            placeholder="Task title"
+            className="input-premium lg:text-lg"
+            placeholder="Define the core objective..."
             disabled={isSubmitting}
             required
           />
         </div>
 
-        <div>
-          <label htmlFor="description" className="block text-sm text-slate-400 mb-2">Description</label>
+        <div className="space-y-3">
+          <label htmlFor="description" className="text-sm font-bold text-slate-400 uppercase tracking-widest ml-1">
+            Context & Details
+          </label>
           <textarea
             id="description"
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            rows={3}
-            className="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 focus:outline-none transition-all resize-none text-base"
-            placeholder="Add details..."
+            rows={4}
+            className="input-premium resize-none"
+            placeholder="Provide additional context for this objective..."
             disabled={isSubmitting}
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-4 sm:gap-5">
-          <div>
-            <label htmlFor="status" className="block text-sm text-slate-400 mb-2">Status</label>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="space-y-3">
+            <label htmlFor="status" className="text-sm font-bold text-slate-400 uppercase tracking-widest ml-1">
+              Mission Phase
+            </label>
             <select
               id="status"
               value={formData.status}
               onChange={(e) => setFormData({ ...formData, status: e.target.value as TaskStatus })}
-              className="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 focus:outline-none transition-all text-base"
+              className="input-premium"
               disabled={isSubmitting}
             >
               <option value="pending">Pending</option>
@@ -93,46 +123,64 @@ export function TaskForm({ task, onSubmit, onCancel }: TaskFormProps) {
             </select>
           </div>
 
-          <div>
-            <label htmlFor="priority" className="block text-sm text-slate-400 mb-2">Priority</label>
+          <div className="space-y-3">
+            <label htmlFor="priority" className="text-sm font-bold text-slate-400 uppercase tracking-widest ml-1">
+              Priority Tier
+            </label>
             <select
               id="priority"
               value={formData.priority}
               onChange={(e) => setFormData({ ...formData, priority: e.target.value as TaskPriority })}
-              className="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 focus:outline-none transition-all text-base"
+              className="input-premium"
               disabled={isSubmitting}
             >
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
+              <option value="low">Low Priority</option>
+              <option value="medium">Standard Bandwidth</option>
+              <option value="high">High Velocity</option>
             </select>
+          </div>
+
+          <div className="space-y-3">
+            <label htmlFor="due_date" className="text-sm font-bold text-slate-400 uppercase tracking-widest ml-1">
+              Deadline
+            </label>
+            <input
+              id="due_date"
+              type="date"
+              value={formData.due_date}
+              onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
+              className="input-premium"
+              disabled={isSubmitting}
+            />
           </div>
         </div>
 
-        <div>
-          <label htmlFor="due_date" className="block text-sm text-slate-400 mb-2">Due Date</label>
-          <input
-            id="due_date"
-            type="date"
-            value={formData.due_date}
-            onChange={(e) => setFormData({ ...formData, due_date: e.target.value })}
-            className="w-full px-4 py-3 bg-slate-900 border border-slate-600 rounded-lg text-white focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 focus:outline-none transition-all text-base"
-            disabled={isSubmitting}
-          />
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-4">
+        <div className="flex flex-col sm:flex-row gap-4 pt-6">
           <button
             type="submit"
-            disabled={isSubmitting || !formData.title}
-            className={
-              "flex-1 py-3 px-6 rounded-lg font-semibold text-base transition-all focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-slate-800 " +
-              (!formData.title || isSubmitting
-                ? "bg-slate-700 text-slate-500 cursor-not-allowed"
-                : "bg-cyan-500 text-slate-900 hover:bg-cyan-400 active:bg-cyan-600")
-            }
+            disabled={isSubmitting || !formData.title.trim()}
+            className="btn-primary-premium flex-1 py-4 text-base shadow-cyan-500/20"
           >
-            {isSubmitting ? 'Saving...' : (task ? 'Update Task' : 'Create Task')}
+            {isSubmitting ? (
+              <span className="flex items-center gap-3">
+                <div className="w-5 h-5 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
+                Synchronizing...
+              </span>
+            ) : task ? (
+              <span className="flex items-center gap-2 uppercase tracking-widest">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                </svg>
+                Deploy Updates
+              </span>
+            ) : (
+              <span className="flex items-center gap-2 uppercase tracking-widest">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v3m0 0v3m0-3h3m-3 0H9" />
+                </svg>
+                Launch Task
+              </span>
+            )}
           </button>
 
           {onCancel && (
@@ -140,9 +188,9 @@ export function TaskForm({ task, onSubmit, onCancel }: TaskFormProps) {
               type="button"
               onClick={onCancel}
               disabled={isSubmitting}
-              className="py-3 px-6 rounded-lg font-semibold text-base text-slate-400 hover:text-white hover:bg-slate-700 transition-all focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 focus:ring-offset-slate-800"
+              className="btn-secondary-premium px-10 py-4 text-base"
             >
-              Cancel
+              Abort
             </button>
           )}
         </div>

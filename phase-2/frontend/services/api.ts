@@ -3,7 +3,7 @@
  */
 import type { Task, TaskListResponse, TaskCreate, TaskUpdate } from '../types/task';
 
-const API_BASE = '';
+const API_BASE = 'http://localhost:8000';
 
 // Default user ID for demo purposes
 const DEFAULT_USER_ID = 1;
