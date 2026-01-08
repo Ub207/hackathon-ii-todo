@@ -2,11 +2,12 @@
   "version": 2,
   "builds": [
     {
-      "src": "phase-2/frontend/next.config.js",
-      "use": "@vercel/next",
-      "config": {
-        "rootDirectory": "phase-2/frontend"
-      }
+      "src": "phase-2/frontend/package.json",
+      "use": "@vercel/next"
     }
+  ],
+  "routes": [
+    { "src": "/(.*)", "dest": "phase-2/frontend/$1" }
   ]
 }
+
